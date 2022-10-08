@@ -1,0 +1,59 @@
+service:
+  name: "portadorService"
+
+plugins:
+  - serverless-offline
+  - serverless-webpack
+
+custom:
+  webpack:
+      webpackConfig: ./webpack.config.js
+      includeModules: true
+  package:
+  individually: true
+  authorizer:
+    type: CUSTOM
+    authorizerId: ${ssm:authorizerId}  
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  timeout: 30
+  region: us-east-2
+  apiGateway:
+    restApiId: 3gz5o9gqmb
+    restApiRootResourceId: jrmd7494j2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - 'ssm:GetParameter'
+        - 'ssm:GetParameters'
+        - 'ssm:GetParameterHistory'
+        - 'ssm:GetParametersByPath'
+        - 'ssm:DescribeParameters'
+      Resource: '*'
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "*"  
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: arn:aws:sns:us-east-2:532362042466:create-account
+
+functions:
+  CreatePortador:
+    handler: src/functions/CreatePortador.handler
+    events:
+      - http:
+          path: portador/createPortador
+          method: POST
+          cors: true
+          authorizer: ${self:custom.authorizer}
+  DeletePortador:
+    handler: src/functions/DeletePortador.handler
+    events:
+      - sqs:
+            arn: arn:aws:sqs:us-east-2:532362042466:delete-account-fila
+                        
+
