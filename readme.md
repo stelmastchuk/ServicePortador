@@ -1,4 +1,4 @@
-![alt_text](https://github.com/stelmastchuk/ServicePortador/blob/master/arquitetura.png)
+![alt_text](https://github.com/stelmastchuk/ServicePortador/blob/main/arquitetura.png)
 
 Arquitetura :
 A arquitetura foi desenvolvida pensando no uso de microservices com event Driven.
